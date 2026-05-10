@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora Web</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+      }
+      .card {
+        width: min(92vw, 360px);
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 1.25rem;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+      input,
+      select,
+      button {
+        width: 100%;
+        margin-top: 6px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #d0d7e2;
+        font-size: 1rem;
+      }
+      button {
+        margin-top: 14px;
+        border: none;
+        background: #2f6feb;
+        color: #fff;
+        cursor: pointer;
+      }
+      .resultado {
+        margin-top: 12px;
+        font-weight: 700;
+      }
+      .error {
+        margin-top: 8px;
+        color: #c62828;
+        min-height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Calculadora web</h1>
+
+      <label for="a">Primer número</label>
+      <input id="a" type="number" step="any" placeholder="Ej: 10" />
+
+      <label for="op">Operación</label>
+      <select id="op">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+
+      <label for="b">Segundo número</label>
+      <input id="b" type="number" step="any" placeholder="Ej: 5" />
+
+      <button id="calcular" type="button">Calcular</button>
+
+      <div id="resultado" class="resultado">Resultado: --</div>
+      <div id="error" class="error"></div>
+    </main>
+
+    <script>
+      function calcular(a, op, b) {
+        const operaciones = {
+          "+": (x, y) => x + y,
+          "-": (x, y) => x - y,
+          "*": (x, y) => x * y,
+          "/": (x, y) => {
+            if (y === 0) {
+              throw new Error("No se puede dividir entre cero");
+            }
+            return x / y;
+          },
+        };
+
+        if (!Object.prototype.hasOwnProperty.call(operaciones, op)) {
+          throw new Error(`Operador no soportado: ${op}`);
+        }
+
+        return operaciones[op](a, b);
+      }
+
+      document.getElementById("calcular").addEventListener("click", () => {
+        const a = Number(document.getElementById("a").value);
+        const b = Number(document.getElementById("b").value);
+        const op = document.getElementById("op").value;
+        const resultadoEl = document.getElementById("resultado");
+        const errorEl = document.getElementById("error");
+
+        errorEl.textContent = "";
+
+        if (Number.isNaN(a) || Number.isNaN(b)) {
+          errorEl.textContent = "Ingresa números válidos";
+          resultadoEl.textContent = "Resultado: --";
+          return;
+        }
+
+        try {
+          const resultado = calcular(a, op, b);
+          resultadoEl.textContent = `Resultado: ${resultado}`;
+        } catch (error) {
+          errorEl.textContent = error.message;
+          resultadoEl.textContent = "Resultado: --";
+        }
+      });
+    </script>
+  </body>
+</html>
